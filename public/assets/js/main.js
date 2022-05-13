@@ -25,3 +25,51 @@ var x = setInterval(function() {
     document.getElementById("countdown").innerHTML = "Refresh the Page!";
   }
 }, 1000);
+
+document.addEventListener('DOMContentLoaded', function() {
+    var submitButton = document.querySelector('#submit')
+    var email = document.querySelector("#email_input")
+
+    submitButton.disabled = true
+    submitButton.classList.remove("hover");
+
+    email.addEventListener('input', function(){
+        if(document.querySelector("#email_input").value == ""){
+            submitButton.disabled = true
+            submitButton.classList.remove("hover");
+        }
+        if(document.querySelector("#email_input").value != ""){
+            submitButton.disabled = false
+            submitButton.classList.add("hover");
+        }
+    })
+
+    submitButton.addEventListener('click', async function() {
+        email = document.querySelector("#email_input").value
+
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        
+        var raw = JSON.stringify({
+            "email": email
+        });
+        
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        
+        fetch("https://sneakers-waitlist.herokuapp.com/add", requestOptions)
+        .then(response => response.text())
+        .then(result => {
+            document.querySelector("#submit").style.color = "#ffffff"
+            document.querySelector("#submit").disabled = true
+            document.querySelector("#submit").style.backgroundColor = "#66ff66"
+            document.querySelector("#submit").style.borderColor = "#66ff66"
+            document.querySelector("#submit").textContent = "Success!"
+        })
+        .catch(error => console.log('error', error))
+    })
+})
